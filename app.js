@@ -1,7 +1,7 @@
-const request = require('request');
 const yargs = require('yargs');
+const geocode = require('./geocode/geocode');
+const weather = require('./weather/weather');
 
-const googleApiKey = "AIzaSyBOjVU2X3co_a9_oSy3vDSdTQ1PzTFbyPk";
 
 
 const argv = yargs
@@ -18,14 +18,22 @@ const argv = yargs
     .argv;
 
 
-const encodedAddress = encodeURIComponent(argv.a);
-const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${googleApiKey}`;
 
-request({
-    url: url,
-    json: true
-},(error, response, body) => {
-    console.log(`the address is:${body.results[0].formatted_address}`);
-    console.log(`the latitude is :${body.results[0].geometry.location.lat}`);
-    console.log(`the longitude is :${body.results[0].geometry.location.lng}`);
+
+geocode.geocodeAddress(argv.address,(errorMessage,results) => {
+    if(errorMessage) {
+        console.log(errorMessage);
+    } else {
+        console.log(`the weather in :${results.address} is :`);
+        // console.log(JSON.stringify(results,undefined,2));
+        weather.getWeather(results.latitude,results.longitude,(errorMessage,results)=> {
+            if(errorMessage){
+                console.log(errorMessage);
+            } else {
+                console.log(`${results.temperatureCelsius} , but feels like ${results.apparentTemperature}`);
+            }
+        })
+    }
 });
+
+

@@ -9,6 +9,8 @@
   "author": "saar",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.17.1",
+    "fahrenheit-to-celsius": "^1.0.0",
     "request": "^2.83.0",
     "yargs": "^10.1.1"
   }
